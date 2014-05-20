@@ -17,9 +17,9 @@
                 }
             });
         },
-        init: function(options, update) {
-            if (!update)
-                methods.destroy.call(this);
+        init: function(options) {
+//            if (options || options.type === 'always')
+//                methods.destroy.call(this);
             this.each(function() {
                 if (!options)
                     options = {};
@@ -36,60 +36,73 @@
                     else
                         set[i] = prop;
                 }
-                set.index = methods.index;
+                if (set.type !== 'always' || !set.index)
+                    set.index = methods.index;
 
-                if (opt)
-                    var tooltip = set.tooltip;
-                if (!update || !tooltip)
-                    tooltip = $('<div class="' + set.tooltipClass + ' ' + set.tooltipClass + set.index + '"></div>').appendTo($('body'));
-                set.tooltip = tooltip;
                 $this.data('tooltip', set);
-                methods._setContent.call(tooltip, set.title);
 
                 $this.data('defaultTriggerOn', false);
-                $this.off(set.triggerOn + '.' + $.tooltip.nS).on(set.triggerOn + '.' + $.tooltip.nS, function() {
-                    methods.init.call($(this), {show: true});
-                });
                 $this.data('defaultTriggerOff', false);
-                $this.off(set.triggerOff + '.' + $.tooltip.nS).on(set.triggerOff + '.' + $.tooltip.nS, function() {
-                    methods.remove.call($(this));
-                });
 
-                if (set.otherClass)
-                    tooltip.addClass(set.otherClass);
-                if (set.type === 'mouse')
-                    $this.off('mousemove.' + $.tooltip.nS).on('mousemove.' + $.tooltip.nS, function(e) {
-                        tooltip.html(set.title).css({
-                            'left': methods._left($(this), tooltip, e.pageX, set),
-                            'top': methods._top($(this), tooltip, e.pageY, set)
+                if (set.type !== 'always') {
+                    if (set.type === 'mouse')
+                        $this.off('mousemove.' + $.tooltip.nS).on('mousemove.' + $.tooltip.nS, function(e) {
+                            set.tooltip.css({
+                                'left': methods._left($this, set.tooltip, e.pageX, set),
+                                'top': methods._top($this, set.tooltip, e.pageY, set)
+                            });
                         });
-                    });
-                tooltip.addClass(set.place).css({
-                    'left': methods._left($this, tooltip, $this.offset().left, set),
-                    'top': methods._top($this, tooltip, $this.offset().top, set)
-                });
+
+                    if (set.trigger) {
+                        $this.off(set.trigger)[set.trigger](function() {
+                            methods._show.call($(this));
+                        }, function() {
+                            methods.remove.call($(this));
+                        });
+                    }
+                    else {
+                        $this.off(set.triggerOn + '.' + $.tooltip.nS).on(set.triggerOn + '.' + $.tooltip.nS, function() {
+                            methods._show.call($(this));
+                        });
+                        $this.off(set.triggerOff + '.' + $.tooltip.nS).on(set.triggerOff + '.' + $.tooltip.nS, function() {
+                            methods.remove.call($(this));
+                        });
+                    }
+                }
 
                 if (set.show)
                     methods._show.call($this);
-
-                $this.off('mouseleave.' + $.tooltip.nS).on('mouseleave.' + $.tooltip.nS, function(e) {
-                    var el = $(this);
-                    if (set.type !== 'always')
-                        el.tooltip('remove', e);
-                });
-                $this.filter(':input').off('blur.' + $.tooltip.nS).on('blur.' + $.tooltip.nS, function(e) {
-                    $(this).tooltip('remove', e);
-                });
                 methods.index++;
             });
             return this;
         },
         show: function() {
-            methods.init.call($(this), {show: true});
+            return methods.init.call($(this), {show: true});
         },
-        _show: function() {
-            var set = this.data('tooltip');
-            return set.tooltip.stop()[set.effectIn](set.durationOn);
+        _show: function(update) {
+            var self = this,
+                    set = self.data('tooltip');
+
+            if (update)
+                set.tooltip.removeAttr('class').addClass(set.tooltipClass + ' ' + set.tooltipClass + set.index);
+            else if (set.type !== 'always' || !$.exists('.' + set.tooltipClass + '.' + set.tooltipClass + set.index))
+                set.tooltip = $('<div class="' + set.tooltipClass + ' ' + set.tooltipClass + set.index + '"></div>').appendTo($('body'));
+
+            methods._setContent.call(set.tooltip, set.title);
+
+
+            if (set.otherClass)
+                set.tooltip.addClass(set.otherClass);
+
+            set.tooltip.addClass(set.place)
+
+            set.tooltip.css({
+                'left': methods._left(self, set.tooltip, self.offset().left, set),
+                'top': methods._top(self, set.tooltip, self.offset().top, set)
+            });
+            if (!update || set.type === 'always' && !set.tooltip.is(':visible'))
+                set.tooltip[set.effectIn](set.durationOn);
+            return self;
         },
         remove: function() {
             return this.each(function() {
@@ -100,8 +113,16 @@
                 });
             });
         },
-        update: function(opt) {
-            return methods.init.call($(this), opt, true);
+        update: function() {
+            return methods._show.call(this, true);
+        },
+        set: function(prop, value) {
+            var self = this;
+            if (self.data('tooltip')) {
+                self.data('tooltip')[prop] = value;
+                methods.update.call(self);
+            }
+            return self;
         },
         _setContent: function(content) {
             return $(this).html(content);
@@ -143,7 +164,7 @@
         if (methods[method]) {
             return methods[ method ].apply(this, Array.prototype.slice.call(arguments, 1));
         } else if (typeof method === 'object' || !method) {
-            return methods.init.apply(this, arguments[0]);
+            return methods.init.apply(this, arguments);
         } else {
             $.error('Method ' + method + ' does not exist on $.tooltip');
         }
@@ -175,8 +196,9 @@
             durationOff: 200,
             tooltipClass: 'tooltip',
             show: false,
+            trigger: '',
             triggerOn: 'mouseenter',
-            triggerOff: 'mouseup'
+            triggerOff: 'mouseleave'
         };
         this.setParameters = function(options) {
             $.extend(this.dP, options);
@@ -185,14 +207,15 @@
     };
     $.tooltip = new $.tooltipInit();
     function handleDefault() {
-        doc.off($.tooltip.triggerOn + '.' + $.tooltip.nS).on($.tooltip.triggerOn + '.' + $.tooltip.nS, '[data-rel="tooltip"]', function(e) {
+        doc.off($.tooltip.dP.triggerOn + '.' + $.tooltip.nS).on($.tooltip.dP.triggerOn + '.' + $.tooltip.nS, '[data-rel="tooltip"]', function(e) {
             if ($(this).data('defaultTriggerOn') !== false)
                 methods.init.call($(this), {show: true});
-        }).off($.tooltip.triggerOff + '.' + $.tooltip.nS).on($.tooltip.triggerOff + '.' + $.tooltip.nS, '[data-rel="tooltip"]', function(e) {
+        }).off($.tooltip.dP.triggerOff + '.' + $.tooltip.nS).on($.tooltip.dP.triggerOff + '.' + $.tooltip.nS, '[data-rel="tooltip"]', function(e) {
             if ($(this).data('defaultTriggerOff') !== false)
                 methods.remove.call($(this));
         });
-    };
+    }
+    ;
     handleDefault();
 })(jQuery, $(document));
 /*plugin tooltip end*/
