@@ -12,7 +12,7 @@
             return this.each(function() {
                 var $this = $(this);
                 if ($this.data('tooltip')) {
-                    methods.remove.call($this);
+                    methods.hide.call($this);
                     $this.removeData('tooltip');
                 }
             });
@@ -36,8 +36,6 @@
                     else
                         set[i] = prop;
                 }
-                if (set.type !== 'always' || !set.index)
-                    set.index = methods.index;
 
                 $this.data('tooltip', set);
 
@@ -54,10 +52,17 @@
                         });
 
                     if (set.trigger) {
-                        $this.off(set.trigger)[set.trigger](function() {
-                            methods._show.call($(this));
-                        }, function() {
-                            methods.remove.call($(this));
+                        $this.off(set.trigger + '.' + $.tooltip.nS).on(set.trigger + '.' + $.tooltip.nS, function() {
+                            var self = $(this),
+                                    set = self.data("tooltip");
+                            if (!set.isShow) {
+                                set.isShow = true;
+                                methods._show.call(self);
+                            }
+                            else {
+                                set.isShow = false;
+                                methods.hide.call(self);
+                            }
                         });
                     }
                     else {
@@ -65,14 +70,18 @@
                             methods._show.call($(this));
                         });
                         $this.off(set.triggerOff + '.' + $.tooltip.nS).on(set.triggerOff + '.' + $.tooltip.nS, function() {
-                            methods.remove.call($(this));
+                            methods.hide.call($(this));
                         });
                     }
                 }
-
-                if (set.show)
-                    methods._show.call($this);
-                methods.index++;
+                if (set.show) {
+                    if (set.type === 'always')
+                        methods._show.call($this);
+                    else if (set.trigger)
+                        $this.trigger(set.trigger + '.' + $.tooltip.nS);
+                    else
+                        $this.trigger(set.triggerOn + '.' + $.tooltip.nS);
+                }
             });
             return this;
         },
@@ -82,6 +91,11 @@
         _show: function(update) {
             var self = this,
                     set = self.data('tooltip');
+            if (!update && set.type !== 'always')
+                methods.hide.call(self);
+            if (set.type !== 'always' || set.index === undefined)
+                set.index = methods.index;
+            methods.index++;
 
             if (update)
                 set.tooltip.removeAttr('class').addClass(set.tooltipClass + ' ' + set.tooltipClass + set.index);
@@ -90,11 +104,10 @@
 
             methods._setContent.call(set.tooltip, set.title);
 
-
             if (set.otherClass)
                 set.tooltip.addClass(set.otherClass);
 
-            set.tooltip.addClass(set.place)
+            set.tooltip.addClass(set.place);
 
             set.tooltip.css({
                 'left': methods._left(self, set.tooltip, self.offset().left, set),
@@ -104,25 +117,35 @@
                 set.tooltip[set.effectIn](set.durationOn);
             return self;
         },
-        remove: function() {
+        hide: function() {
             return this.each(function() {
                 var $this = $(this),
                         set = $this.data('tooltip');
-                $('.' + set.tooltipClass + set.index).stop()[set.effectOff](set.durOff, function() {
-                    $(this).remove();
-                });
+                if (set && set.index !== undefined)
+                    $('.' + set.tooltipClass + set.index).stop()[set.effectOff](set.durOff, function() {
+                        $(this).remove();
+                    });
             });
         },
-        update: function() {
+        _update: function() {
             return methods._show.call(this, true);
         },
         set: function(prop, value) {
-            var self = this;
-            if (self.data('tooltip')) {
-                self.data('tooltip')[prop] = value;
-                methods.update.call(self);
+            var self = this,
+                    set = self.data('tooltip');
+            if (set) {
+                set[prop] = value;
+                methods._update.call(self);
             }
             return self;
+        },
+        get: function(prop) {
+            var self = this,
+                    set = self.data('tooltip');
+            if (set && set[prop])
+                return set[prop];
+            else
+                return null;
         },
         _setContent: function(content) {
             return $(this).html(content);
@@ -147,7 +170,7 @@
         _actual: function() {
             if (arguments.length && typeof arguments[0] === 'string') {
                 var dim = arguments[0],
-                        clone = this.clone().addClass();
+                        clone = this.clone();
                 if (arguments[1] === undefined)
                     clone.css({
                         position: 'absolute',
@@ -212,7 +235,7 @@
                 methods.init.call($(this), {show: true});
         }).off($.tooltip.dP.triggerOff + '.' + $.tooltip.nS).on($.tooltip.dP.triggerOff + '.' + $.tooltip.nS, '[data-rel="tooltip"]', function(e) {
             if ($(this).data('defaultTriggerOff') !== false)
-                methods.remove.call($(this));
+                methods.hide.call($(this));
         });
     }
     ;
