@@ -115,9 +115,7 @@
             if (set.otherClass)
                 set.tip.addClass(set.otherClass);
 
-            set.tip.addClass(set.place);
-
-            set.tip.css({
+            set.tip.addClass(set.place).css({
                 'left': methods._left(self, set.tip, self.offset().left, set),
                 'top': methods._top(self, set.tip, self.offset().top, set)
             });
