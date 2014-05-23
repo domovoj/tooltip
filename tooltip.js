@@ -8,25 +8,13 @@
     };
     var methods = {
         index: 0,
-        destroy: function() {
-            return this.each(function() {
-                var $this = $(this);
-                if ($this.data('tooltip')) {
-                    methods.hide.call($this);
-                    $this.removeData('tooltip');
-                }
-            });
-        },
         init: function(options) {
-//            if (options || options.type === 'always')
-//                methods.destroy.call(this);
             this.each(function() {
+                var $this = $(this),
+                        elSet = $.extend({}, $this.data('tooltip'), $this.data()),
+                        set = {};
                 if (!options)
                     options = {};
-                var $this = $(this),
-                        elSet = $this.data(),
-                        opt = $this.data('tooltip'),
-                        set = opt ? opt : {};
                 for (var i in $.tooltip.dP) {
                     var prop = (elSet[i] !== undefined ? elSet[i] : '').toString() || (options[i] !== undefined ? options[i] : '').toString() || $.tooltip.dP[i].toString();
                     if (!isNaN(parseFloat($.tooltip.dP[i])) && isFinite($.tooltip.dP[i]))
@@ -36,7 +24,10 @@
                     else
                         set[i] = prop;
                 }
-
+                if (elSet.index !== undefined && set.type === 'always') {
+                    set.index = elSet.index;
+                    set.tip = elSet.tip;
+                }
                 $this.data('tooltip', set);
 
                 $this.data('defaultTriggerOn', false);
@@ -45,9 +36,9 @@
                 if (set.type !== 'always') {
                     if (set.type === 'mouse')
                         $this.off('mousemove.' + $.tooltip.nS).on('mousemove.' + $.tooltip.nS, function(e) {
-                            set.tooltip.css({
-                                'left': methods._left($this, set.tooltip, e.pageX, set),
-                                'top': methods._top($this, set.tooltip, e.pageY, set)
+                            set.tip.css({
+                                'left': methods._left($this, set.tip, e.pageX, set),
+                                'top': methods._top($this, set.tip, e.pageY, set)
                             });
                         });
 
@@ -70,7 +61,21 @@
                             methods._show.call($(this));
                         });
                         $this.off(set.triggerOff + '.' + $.tooltip.nS).on(set.triggerOff + '.' + $.tooltip.nS, function() {
-                            methods.hide.call($(this));
+                            var self = $(this),
+                                    set = self.data('tooltip');
+                            if (set.type === 'interactive') {
+                                set.tip.on('mouseenter.' + $.tooltip.nS, function() {
+                                    $(this).data('hover', true).on('mouseleave.' + $.tooltip.nS, function() {
+                                        methods.hide.call(self);
+                                    });
+                                });
+                                setTimeout(function() {
+                                    if (!set.tip.data('hover'))
+                                        methods.hide.call(self);
+                                }, 500);
+                            }
+                            else
+                                methods.hide.call(self);
                         });
                     }
                 }
@@ -91,30 +96,33 @@
         _show: function(update) {
             var self = this,
                     set = self.data('tooltip');
+
             if (!update && set.type !== 'always')
                 methods.hide.call(self);
-            if (set.type !== 'always' || set.index === undefined)
+
+            if (set.type !== 'always' || set.index === undefined) {
                 set.index = methods.index;
-            methods.index++;
+                methods.index++;
+            }
 
             if (update)
-                set.tooltip.removeAttr('class').addClass(set.tooltipClass + ' ' + set.tooltipClass + set.index);
+                set.tip.removeAttr('class').addClass(set.tooltipClass + ' ' + set.tooltipClass + set.index);
             else if (set.type !== 'always' || !$.exists('.' + set.tooltipClass + '.' + set.tooltipClass + set.index))
-                set.tooltip = $('<div class="' + set.tooltipClass + ' ' + set.tooltipClass + set.index + '"></div>').appendTo($('body'));
+                set.tip = $('<div class="' + set.tooltipClass + ' ' + set.tooltipClass + set.index + '"></div>').appendTo($('body'));
 
-            methods._setContent.call(set.tooltip, set.title);
+            methods._setContent.call(set.tip, set.title);
 
             if (set.otherClass)
-                set.tooltip.addClass(set.otherClass);
+                set.tip.addClass(set.otherClass);
 
-            set.tooltip.addClass(set.place);
+            set.tip.addClass(set.place);
 
-            set.tooltip.css({
-                'left': methods._left(self, set.tooltip, self.offset().left, set),
-                'top': methods._top(self, set.tooltip, self.offset().top, set)
+            set.tip.css({
+                'left': methods._left(self, set.tip, self.offset().left, set),
+                'top': methods._top(self, set.tip, self.offset().top, set)
             });
-            if (!update || set.type === 'always' && !set.tooltip.is(':visible'))
-                set.tooltip[set.effectIn](set.durationOn);
+            if (!update || set.type === 'always' && !set.tip.is(':visible'))
+                set.tip[set.effectIn](set.durationOn);
             return self;
         },
         hide: function() {
@@ -144,8 +152,7 @@
                     set = self.data('tooltip');
             if (set && set[prop])
                 return set[prop];
-            else
-                return null;
+            return null;
         },
         _setContent: function(content) {
             return $(this).html(content);
@@ -155,17 +162,14 @@
                 return Math.ceil(left - (methods._actual.call(tooltip, 'outerWidth') - set.offsetX));
             if (set.place === 'right')
                 return Math.ceil(left + (set.type === 'mouse' ? 0 : el.outerWidth()) + set.offsetX);
-            else
-                return Math.ceil(left - (set.type === 'mouse' ? set.offsetX : (methods._actual.call(tooltip, 'outerWidth') - el.outerWidth()) / 2));
+            return Math.ceil(left - (set.type === 'mouse' ? set.offsetX : (methods._actual.call(tooltip, 'outerWidth') - el.outerWidth()) / 2));
         },
         _top: function(el, tooltip, top, set) {
             if (set.place === 'top')
                 return Math.ceil(top - (methods._actual.call(tooltip, 'outerHeight') - set.offsetY));
             if (set.place === 'bottom')
                 return Math.ceil(top + (set.type === 'mouse' ? 0 : el.outerHeight()) + set.offsetY);
-            else {
-                return Math.ceil(top - (set.type === 'mouse' ? set.offsetY : (methods._actual.call(tooltip, 'outerHeight') - el.outerHeight()) / 2));
-            }
+            return Math.ceil(top - (set.type === 'mouse' ? set.offsetY : (methods._actual.call(tooltip, 'outerHeight') - el.outerHeight()) / 2));
         },
         _actual: function() {
             if (arguments.length && typeof arguments[0] === 'string') {
