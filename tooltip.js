@@ -1,3 +1,5 @@
+/*write callbacks*/
+
 /*plugin tooltip*/
 (function($, doc) {
     $.existsN = function(nabir) {
