@@ -13,22 +13,12 @@
         init: function(options) {
             this.each(function() {
                 var $this = $(this),
-                        elSet = $.extend({}, $this.data('tooltip'), $this.data()),
-                        set = {};
-                if (!options)
-                    options = {};
-                for (var i in $.tooltip.dP) {
-                    var prop = (elSet[i] !== undefined ? elSet[i] : '').toString() || (options[i] !== undefined ? options[i] : '').toString() || $.tooltip.dP[i].toString();
-                    if (!isNaN(parseFloat($.tooltip.dP[i])) && isFinite($.tooltip.dP[i]))
-                        set[i] = +(prop);
-                    else if ($.tooltip.dP[i].toString().toLowerCase() === 'false' || $.tooltip.dP[i].toString().toLowerCase() === 'true')
-                        set[i] = /^true$/i.test(prop.toLowerCase());
-                    else
-                        set[i] = prop;
-                }
-                if (elSet.index !== undefined && set.type === 'always') {
-                    set.index = elSet.index;
-                    set.tip = elSet.tip;
+                        data = $.extend({}, $this.data('tooltip'), $this.data()),
+                        set = $.extend({}, $.tooltip.dP, options, data);
+                
+                if (data.index !== undefined && set.type === 'always') {
+                    set.index = data.index;
+                    set.tip = data.tip;
                 }
                 $this.data('tooltip', set);
 
