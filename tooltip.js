@@ -15,45 +15,45 @@
                 var $this = $(this),
                         data = $.extend({}, $this.data('tooltip'), $this.data()),
                         set = $.extend({}, $.tooltip.dP, options, data);
-                
+
                 if (data.index !== undefined && set.type === 'always') {
                     set.index = data.index;
                     set.tip = data.tip;
                     set.title = options.title;
                 }
-                
+
                 $this.data('tooltip', set);
 
                 $this.data('defaultTriggerOn', false);
                 $this.data('defaultTriggerOff', false);
 
-                if (set.type !== 'always') {
-                    if (set.type === 'mouse')
-                        $this.off('mousemove.' + $.tooltip.nS).on('mousemove.' + $.tooltip.nS, function(e) {
-                            set.tip.css({
-                                'left': methods._left($this, set.tip, e.pageX, set),
-                                'top': methods._top($this, set.tip, e.pageY, set)
-                            });
-                        });
 
-                    if (set.trigger) {
-                        $this.off(set.trigger + '.' + $.tooltip.nS).on(set.trigger + '.' + $.tooltip.nS, function() {
-                            var self = $(this),
-                                    set = self.data("tooltip");
-                            if (!set.isShow) {
-                                set.isShow = true;
-                                methods._show.call(self);
-                            }
-                            else {
-                                set.isShow = false;
-                                methods.hide.call(self);
-                            }
+                if (set.type === 'mouse')
+                    $this.off('mousemove.' + $.tooltip.nS).on('mousemove.' + $.tooltip.nS, function(e) {
+                        set.tip.css({
+                            'left': methods._left($this, set.tip, e.pageX, set),
+                            'top': methods._top($this, set.tip, e.pageY, set)
                         });
-                    }
-                    else {
+                    });
+                if (set.trigger)
+                    $this.off(set.trigger + '.' + $.tooltip.nS).on(set.trigger + '.' + $.tooltip.nS, function() {
+                        var self = $(this),
+                                set = self.data("tooltip");
+                        if (!set.isShow) {
+                            set.isShow = true;
+                            methods._show.call(self);
+                        }
+                        else {
+                            set.isShow = false;
+                            methods.hide.call(self);
+                        }
+                    });
+                else {
+                    if (set.triggerOn)
                         $this.off(set.triggerOn + '.' + $.tooltip.nS).on(set.triggerOn + '.' + $.tooltip.nS, function() {
                             methods._show.call($(this));
                         });
+                    if (set.triggerOff && set.type !== 'always')
                         $this.off(set.triggerOff + '.' + $.tooltip.nS).on(set.triggerOff + '.' + $.tooltip.nS, function() {
                             var self = $(this),
                                     set = self.data('tooltip');
@@ -71,8 +71,8 @@
                             else
                                 methods.hide.call(self);
                         });
-                    }
                 }
+
                 if (set.show) {
                     if (set.type === 'always')
                         methods._show.call($this);
