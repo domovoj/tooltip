@@ -19,7 +19,9 @@
                 if (data.index !== undefined && set.type === 'always') {
                     set.index = data.index;
                     set.tip = data.tip;
+                    set.title = options.title;
                 }
+                
                 $this.data('tooltip', set);
 
                 $this.data('defaultTriggerOn', false);
