@@ -1,13 +1,7 @@
-/*write callbacks*/
+/*will write callbacks*/
 
 /*plugin tooltip*/
 (function($, doc) {
-    $.existsN = function(nabir) {
-        return nabir.length > 0 && nabir instanceof jQuery;
-    };
-    $.exists = function(selector) {
-        return $(selector).length > 0 && $(selector) instanceof jQuery;
-    };
     var methods = {
         index: 0,
         init: function(options) {
@@ -101,7 +95,7 @@
 
             if (update)
                 set.tip.removeAttr('class').addClass(set.tooltipClass + ' ' + set.tooltipClass + set.index);
-            else if (set.type !== 'always' || !$.exists('.' + set.tooltipClass + '.' + set.tooltipClass + set.index))
+            else if (set.type !== 'always' || !$('.' + set.tooltipClass + '.' + set.tooltipClass + set.index).length)
                 set.tip = $('<div class="' + set.tooltipClass + ' ' + set.tooltipClass + set.index + '"></div>').appendTo($('body'));
 
             methods._setContent.call(set.tip, set.title);
