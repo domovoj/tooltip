@@ -4,15 +4,16 @@
         <title>TODO supply a title</title>
         <meta charset = "UTF-8">
         <meta name = "viewport" content = "width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" type="text/css" href="bootstrap.min.css"/>
-        <link rel="stylesheet" type="text/css" href="bootstrap-theme.css"/>
         <style>
             *{margin: 0;padding: 0;}
             body{padding-bottom: 50px;}
-            .tooltip{position:absolute;z-index:2104;display:block;visibility:visible;padding:3px 10px;display: none;padding:5px;}
+            .container{max-width: 1170px;margin: 0 auto;}
+            
+            .tooltip{position:absolute;z-index:2104;display:block;visibility:visible;padding: 5px 10px;display: none;padding:5px;}
+            .tooltip a{color: #fff;}
             .tooltip:after{content: "";position:absolute;width:0;height:0;}
 
-            .tooltip{font-size:11px;text-align:center;text-decoration:none;border-radius:2px;opacity: 0.7;}
+            .tooltip{font-size:11px;text-align:center;text-decoration:none;border-radius:2px;opacity: 0.9;}
             .tooltip:after{border-color:transparent;border-style:solid;border-width:5px;}
 
             .tooltip{background-color:#000;color:#fff;}
@@ -49,64 +50,66 @@
         <script src="tooltip.js"></script>
     </head>
     <body>
-        <h3>Simple Tooltip</h3>
-        <span data-rel="tooltip" data-title="This is simple Tooltip Top - default">Simple Tooltip Top - default</span>
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        <span data-rel="tooltip" data-place="bottom" data-title="This is simple Tooltip Bottom">Simple Tooltip Bottom</span>
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        <span data-rel="tooltip" data-place="left" data-title="This is simple Tooltip Left">Simple Tooltip Left</span>
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        <span data-rel="tooltip" data-place="right" data-title="This is simple Tooltip Right">Simple Tooltip Right</span>
-        <!--------------------->
-        <h3>Simple Tooltip with offset</h3>
-        <span data-rel="tooltip" data-title="This is simple Tooltip Top - default" data-offset-y="-25">Simple Tooltip Top - default</span>
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        <span data-rel="tooltip" data-place="bottom" data-title="This is simple Tooltip Bottom" data-offset-y="25">Simple Tooltip Bottom</span>
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        <span data-rel="tooltip" data-place="left" data-title="This is simple Tooltip Left" data-offset-x="-25">Simple Tooltip Left</span>
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        <span data-rel="tooltip" data-place="right" data-title="This is simple Tooltip Right" data-offset-x="25">Simple Tooltip Right</span>
-        <!--------------------->
-        <h3>Mouse Tooltip</h3>
-        <span data-rel="tooltip" data-title="This is mouse Tooltip Top" data-type="mouse" data-offset-y="-15">Mouse Tooltip Top</span>
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        <span data-rel="tooltip" data-place="bottom" data-title="This is simple Tooltip Bottom" data-type="mouse" data-offset-y="15">Mouse Tooltip Bottom</span>
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        <span data-rel="tooltip" data-place="left" data-title="This is simple Tooltip Left" data-offset-x="-15" data-type="mouse">Mouse Tooltip Left</span>
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        <span data-rel="tooltip" data-place="right" data-title="This is simple Tooltip Right" data-offset-x="15" data-type="mouse">Mouse Tooltip Right</span>
-        <!--------------------->
-        <h3>Many Tooltip</h3>
-        <span data-rel="tooltip" data-title="Simple Tooltip Top" style="border: 3px solid red;display: inline-block;">
-            Simple Tooltip Top
-            <span data-rel="tooltip" data-place = "right" data-title="Simple Tooltip Right" data-offset-x="15" style="border: 3px solid blue;">
-                Simple Tooltip right
-                <span data-rel="tooltip" data-place = "bottom" data-title="Simple Tooltip Bottom" data-offset-y="15" style="border: 3px solid green;">Simple Tooltip bottom</span>
+        <div class="container">
+            <h3>Simple Tooltip</h3>
+            <span data-rel="tooltip" data-title="This is simple Tooltip Top - default">Simple Tooltip Top - default</span>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <span data-rel="tooltip" data-place="bottom" data-title="This is simple Tooltip Bottom">Simple Tooltip Bottom</span>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <span data-rel="tooltip" data-place="left" data-title="This is simple Tooltip Left">Simple Tooltip Left</span>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <span data-rel="tooltip" data-place="right" data-title="This is simple Tooltip Right">Simple Tooltip Right</span>
+            <!--------------------->
+            <h3>Simple Tooltip with offset</h3>
+            <span data-rel="tooltip" data-title="This is simple Tooltip Top - default" data-offset-y="-25">Simple Tooltip Top - default</span>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <span data-rel="tooltip" data-place="bottom" data-title="This is simple Tooltip Bottom" data-offset-y="25">Simple Tooltip Bottom</span>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <span data-rel="tooltip" data-place="left" data-title="This is simple Tooltip Left" data-offset-x="-25">Simple Tooltip Left</span>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <span data-rel="tooltip" data-place="right" data-title="This is simple Tooltip Right" data-offset-x="25">Simple Tooltip Right</span>
+            <!--------------------->
+            <h3>Mouse Tooltip</h3>
+            <span data-rel="tooltip" data-title="This is mouse Tooltip Top" data-type="mouse" data-offset-y="-15">Mouse Tooltip Top</span>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <span data-rel="tooltip" data-place="bottom" data-title="This is simple Tooltip Bottom" data-type="mouse" data-offset-y="15">Mouse Tooltip Bottom</span>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <span data-rel="tooltip" data-place="left" data-title="This is simple Tooltip Left" data-offset-x="-15" data-type="mouse">Mouse Tooltip Left</span>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <span data-rel="tooltip" data-place="right" data-title="This is simple Tooltip Right" data-offset-x="15" data-type="mouse">Mouse Tooltip Right</span>
+            <!--------------------->
+            <h3>Many Tooltip</h3>
+            <span data-rel="tooltip" data-title="Simple Tooltip Top" style="border: 3px solid red;display: inline-block;">
+                Simple Tooltip Top
+                <span data-rel="tooltip" data-place = "right" data-title="Simple Tooltip Right" data-offset-x="15" style="border: 3px solid blue;">
+                    Simple Tooltip right
+                    <span data-rel="tooltip" data-place = "bottom" data-title="Simple Tooltip Bottom" data-offset-y="15" style="border: 3px solid green;">Simple Tooltip bottom</span>
+                </span>
             </span>
-        </span>
-        <!--------------------->
-        <h3>Trigger click</h3>
-        <span id="triggerClick" data-title="Simple Tooltip Top" style="border: 3px solid red;" data-trigger="click">Simple Tooltip Top</span>
-        <!--------------------->
-        <h3>Trigger focus|blur</h3>
-        <input id="triggerClickFocus" data-title="Simple Tooltip Top" style="border: 3px solid red;" data-trigger-on="focus" data-trigger-off="blur">
-        <!--------------------->
-        <h3>Always Tooltip</h3>
-        <div class="slider" id="slider1">
-            <a href="#" class="ui-slider-handle left-slider"></a>
-            <a href="#" class="ui-slider-handle right-slider"></a>
+            <!--------------------->
+            <h3>Trigger click</h3>
+            <span id="triggerClick" data-title="Simple Tooltip Top" style="border: 3px solid red;" data-trigger="click">Simple Tooltip Top</span>
+            <!--------------------->
+            <h3>Trigger focus|blur</h3>
+            <input id="triggerClickFocus" data-title="Simple Tooltip Top" style="border: 3px solid red;" data-trigger-on="focus" data-trigger-off="blur">
+            <!--------------------->
+            <h3>Always Tooltip</h3>
+            <div class="slider" id="slider1">
+                <a href="#" class="ui-slider-handle left-slider"></a>
+                <a href="#" class="ui-slider-handle right-slider"></a>
+            </div>
+            <!--------------------->
+            <h3>Hover on Tooltip</h3>
+            <span data-rel="tooltip" data-title="hover tooltip <a href='http://google.com'>google.com</a>" data-type="interactive" data-offset-y="-10">Hover on Tooltip</span>
+            <!--------------------->
+            <h3>Trigger click change settings</h3>
+            <span id="triggerClick2" data-title="Simple Tooltip Top" style="border: 3px solid red;" data-trigger="click">Simple Tooltip Top</span>
+            <button onclick="$('#triggerClick2').tooltip('set', 'title', 'other title')">change value 'other title'</button>
+            <button onclick="$('#triggerClick2').tooltip('set', 'place', 'bottom')">change place 'bottom'</button>
+            <button onclick="$('#triggerClick2').tooltip('set', 'offsetY', $('#triggerClick2').tooltip('get', 'offsetY') - 10)">change offsetY -10</button>
+            <button onclick="$('#triggerClick2').tooltip('set', 'offsetY', $('#triggerClick2').tooltip('get', 'offsetY') + 10)">change offsetY +10</button>
+            <button onclick="$('#triggerClick2').tooltip('set', 'otherClass', 'tooltip-other')">add other class 'tooltip-other'</button>
         </div>
-        <!--------------------->
-        <h3>Hover on Tooltip</h3>
-        <span data-rel="tooltip" data-title="hover tooltip <a href='http://google.com'>google.com</a>" data-type="interactive" data-offset-y="-10">Hover on Tooltip</span>
-        <!--------------------->
-        <h3>Trigger click change settings</h3>
-        <span id="triggerClick2" data-title="Simple Tooltip Top" style="border: 3px solid red;" data-trigger="click">Simple Tooltip Top</span>
-        <button onclick="$('#triggerClick2').tooltip('set', 'title', 'other title')">change value 'other title'</button>
-        <button onclick="$('#triggerClick2').tooltip('set', 'place', 'bottom')">change place 'bottom'</button>
-        <button onclick="$('#triggerClick2').tooltip('set', 'offsetY', $('#triggerClick2').tooltip('get', 'offsetY') - 10)">change offsetY -10</button>
-        <button onclick="$('#triggerClick2').tooltip('set', 'offsetY', $('#triggerClick2').tooltip('get', 'offsetY') + 10)">change offsetY +10</button>
-        <button onclick="$('#triggerClick2').tooltip('set', 'otherClass', 'tooltip-other')">add other class 'tooltip-other'</button>
         <script type="text/javascript">
             $('#triggerClick').tooltip();
             $('#triggerClickFocus').tooltip();
@@ -118,7 +121,7 @@
                 max: 1000,
                 values: [0, 500],
                 range: true,
-                slide: function(e, ui) {
+                slide: function (e, ui) {
                     if ($(ui.handle).is('.left-slider')) {
                         $(ui.handle).tooltip({
                             'show': true,
@@ -136,7 +139,7 @@
                         })
                     }
                 },
-                stop: function(e, ui) {
+                stop: function (e, ui) {
                     $(ui.handle).tooltip('hide');
                 }
             });
