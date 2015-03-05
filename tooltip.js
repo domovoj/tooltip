@@ -233,5 +233,5 @@
     }
     ;
     handleDefault();
-})(jQuery, $(document));
+})(jQuery, jQuery(document));
 /*plugin tooltip end*/
